@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'WitchBlogFlask'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_87F689D87F7F470B9D187514C7D6D219 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_10EACA44BF1C4EC78A04127C4849A2CF }}
