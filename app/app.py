@@ -37,5 +37,10 @@ def process():
     return jsonify(response_list)
 
 
+@app.route('')
+def test():
+    return 'Siemanko, witam w mojej kuchni!'
+
+
 if __name__ == '__main__':
     app.run()
