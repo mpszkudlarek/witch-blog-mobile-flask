@@ -8,14 +8,15 @@ app = Flask(__name__)
 
 @app.route('/process', methods=['POST'])
 def process():
-    user_id = request.form['user_id']
-    number_of_photos = int(request.form['number_of_photos'])
+    json_data = request.get_json()
+    user_id = json_data['id']
+    number_of_photos = json_data['number_of_cards']
 
     folder_name = 'cards_from_user_' + user_id
     os.makedirs(folder_name, exist_ok=True)
 
     for i in range(1, number_of_photos + 1):
-        image_data = request.form['image_' + str(i)]
+        image_data = json_data['image_' + str(i)]
         image = base64.b64decode(image_data)
         file_path = folder_name + '/image_' + str(i) + '.jpg'
         with open(file_path, "wb") as f:
