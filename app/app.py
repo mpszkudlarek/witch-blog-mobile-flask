@@ -37,7 +37,7 @@ def process():
     return jsonify(response_list)
 
 
-@app.route('')
+@app.route('/')
 def test():
     return 'Siemanko, witam w mojej kuchni!'
 
