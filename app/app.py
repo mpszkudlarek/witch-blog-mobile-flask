@@ -1,42 +1,39 @@
 from flask import Flask, jsonify, request
 import base64
 import os
-from image_detection import cards_from_image
 from card_recognition_algorithm import cardRecognitionAlgorithm
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-   print('Request for index page received')
 
 @app.route('/process', methods=['POST'])
 def process():
-    encoded_photo = request.form['image']
-    decoded_photo = base64.b64decode(encoded_photo)
-    with open("images/test.png", "wb") as fh:
-        fh.write(decoded_photo)
-    cards_from_image("images/test.png")
-    cardRecognitionAlgorithm()
-    # for fileName in os.listdir("detected_cards/"):
-    #     os.remove("detected_cards/" + fileName)
-    # Create a response
+    user_id = request.form['user_id']
+    number_of_photos = int(request.form['number_of_photos'])
 
-    response = {
-        'message': 'Card processed successfully',
-    }
+    folder_name = 'cards_from_user_' + user_id
+    os.makedirs(folder_name, exist_ok=True)
 
-    return jsonify(response)
+    for i in range(1, number_of_photos + 1):
+        image_data = request.form['image_' + str(i)]
+        image = base64.b64decode(image_data)
+        file_path = folder_name + '/image_' + str(i) + '.jpg'
+        with open(file_path, "wb") as f:
+            f.write(image)
 
+    response_list = []
 
-def create_directory(directory):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    for i in range(1, number_of_photos + 1):
+        file_path = folder_name + '/image_' + str(i) + '.jpg'
+        card_number, card_name = cardRecognitionAlgorithm(file_path)
+        response_list.append({'card_number': card_number, 'card_name': card_name})
 
+    detected_cards_directory = 'detectedCards'
+    for file_name in os.listdir(detected_cards_directory):
+        file_path = os.path.join(detected_cards_directory, file_name)
+        os.remove(file_path)
 
-def save_result(result, file_path):
-    with open(file_path, "wb") as file:
-        file.write(result)
+    return jsonify(response_list)
 
 
 if __name__ == '__main__':
